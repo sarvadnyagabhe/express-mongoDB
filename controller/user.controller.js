@@ -1,6 +1,6 @@
 const { User } = require("../models/user.model");
-const randomstring = require("randomstring");
-const nodemailer = require("nodemailer");
+const { otpGenerator } = require("../utils/otpGenerator");
+const { sendOTPEmail } = require("../services/user.otp.service");
 
 //create new user
 exports.createUser = async (req, res) => {
@@ -43,47 +43,23 @@ exports.loginUser = async (req, res) => {
 exports.sendOTP = async (req, res) => {
   try {
     const { email } = req.body;
-
+    const user = await User.findOne({ email });
     if (!email) {
       return res
         .status(404)
         .json({ success: false, message: "Email is required" });
     }
 
-    const randomOtp = randomstring.generate({
-      length: 6,
-      charset: "numeric",
-    });
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
 
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 587, // Use 587 for TLS or 465 for SSL
-      secure: false, // Use false for TLS, true for SSL
-      auth: {
-        user: "sarvadnyagabhe@gmail.com",
-        pass: "msom flsq jjbj xcau",
-      },
-    });
+    //utils to generate otp
+    const randomOtp = otpGenerator();
 
-    const sendOTPEmail = async (email, otp) => {
-      try {
-        const mailOptions = {
-          from: "sarvadnyagabhe@gmail.com",
-          to: email,
-          subject: "OTP for verification",
-          text: `Your OTP code is ${otp}`,
-          html: `<p>Your OTP code is <b>${otp}</b>. It will expire in 5 minutes.</p>`,
-        };
-        const info = await transporter.sendMail(mailOptions);
-        console.log("Email sent:- ", info.response);
-        console.log("otp:- ", otp);
-        return true;
-      } catch (error) {
-        console.error("Error sending email:", error);
-        return false;
-      }
-    };
-
+    //service to send otp
     const emailSent = await sendOTPEmail(email, randomOtp);
 
     if (emailSent) {
