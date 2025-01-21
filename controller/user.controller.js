@@ -2,7 +2,7 @@ const { User } = require("../models/user.model");
 const { generateOTP } = require("../utils/otpGenerator");
 const { sendOTPEmail } = require("../services/user.otp.service");
 const { generateToken } = require("../utils/tokenGenerator");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 //create new user
 exports.createUser = async (req, res) => {
