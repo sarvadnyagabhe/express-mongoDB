@@ -7,5 +7,6 @@ routes.get("/getAllUsers", UserController.getAllUsers);
 routes.post("/login", UserController.loginUser);
 routes.post("/sendOtp", UserController.sendOTP);
 routes.put("/updateUser/:id", UserController.updateUser);
+routes.delete("/deleteUser/:id", UserController.deleteUser);
 
 module.exports = routes;

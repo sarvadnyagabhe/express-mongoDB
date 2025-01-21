@@ -127,3 +127,24 @@ exports.sendOTP = async (req, res) => {
     return res.status(500).json({ success: false, error: error.message });
   }
 };
+
+//delete user
+exports.deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedUser = await User.findByIdAndDelete(id);
+    console.log("==>", deletedUser);
+    if (!deletedUser) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User Not Found" });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "User deleted successfully",
+      data: deletedUser,
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: error.message });
+  }
+};
