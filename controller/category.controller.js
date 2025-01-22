@@ -3,6 +3,8 @@ const Category = require("../models/category.model");
 //create category
 exports.createCategory = async (req, res) => {
   const { name, description } = req.body;
+  console.log("===>", req.body);
+
   try {
     const category = new Category(req.body);
 
